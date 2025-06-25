@@ -12,7 +12,7 @@ This project helps users measure time intervals with precision. You can start, p
 
 * 🏁 Lap time recording and display
 
-* 🌗 Background theme keeps changing
+* 🌗 Animated Gradient background
 
 * 💾 Session persistence – laps remembered via localStorage
 
