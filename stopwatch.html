@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Creative Stopwatch</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      block-size: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(270deg, #00e1ff, #1e1e2f, #ff6ec4);
+      background-size: 600% 600%;
+      animation: gradientBG 15s ease infinite;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.8);
+      padding: 35px 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      inline-size: 360px;
+      color: #ffffff;
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      font-size: 2.2em;
+      margin-block-end: 20px;
+      color: #00e1ff;
+    }
+
+    .timer {
+      font-size: 2.8em;
+      font-weight: bold;
+      margin-block-end: 20px;
+      color: #ffffff;
+      text-shadow: 0 0 10px #00e1ff80;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-block-end: 20px;
+    }
+
+    button {
+      padding: 10px 18px;
+      font-size: 1em;
+      border: none;
+      border-radius: 10px;
+      background: #00e1ff;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s ease;
+      box-shadow: 0 4px 10px rgba(0, 225, 255, 0.3);
+    }
+
+    button:hover {
+      background-color: #00b7cc;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 225, 255, 0.5);
+    }
+
+    button:disabled {
+      background-color: #555;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .laps-list {
+      list-style: none;
+      padding: 0;
+      max-block-size: 160px;
+      overflow-y: auto;
+      border-block-start: 1px solid #444;
+      margin-block-start: 15px;
+    }
+
+    .laps-list li {
+      padding: 6px 0;
+      border-block-end: 1px solid #333;
+      font-family: monospace;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Stopwatch</h1>
+    <div class="timer" id="timer">00:00:00.00</div>
+
+    <div class="buttons">
+      <button id="startStopBtn">Start</button>
+      <button id="lapBtn" disabled>Lap</button>
+      <button id="resetBtn">Reset</button>
+    </div>
+
+    <ul id="laps" class="laps-list"></ul>
+  </div>
+
+  <script>
+    let startTime, interval;
+    let running = false;
+    let lapCounter = 1;
+
+    const timerDisplay = document.getElementById("timer");
+    const startStopBtn = document.getElementById("startStopBtn");
+    const lapBtn = document.getElementById("lapBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const laps = document.getElementById("laps");
+
+    function formatTime(ms) {
+      const date = new Date(ms);
+      const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+      const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+      const centiseconds = String(Math.floor((ms % 1000) / 10)).padStart(2, '0');
+      return `${minutes}:${seconds}.${centiseconds}`;
+    }
+
+    function updateTimer() {
+      const elapsed = Date.now() - startTime;
+      timerDisplay.textContent = formatTime(elapsed);
+    }
+
+    startStopBtn.addEventListener("click", () => {
+      if (!running) {
+        startTime = Date.now() - (parseInt(timerDisplay.getAttribute("data-time")) || 0);
+        interval = setInterval(updateTimer, 10);
+        running = true;
+        startStopBtn.textContent = "Pause";
+        lapBtn.disabled = false;
+      } else {
+        clearInterval(interval);
+        timerDisplay.setAttribute("data-time", Date.now() - startTime);
+        running = false;
+        startStopBtn.textContent = "Start";
+        lapBtn.disabled = true;
+      }
+    });
+
+    lapBtn.addEventListener("click", () => {
+      if (running) {
+        const li = document.createElement("li");
+        li.textContent = `Lap ${lapCounter++} - ${timerDisplay.textContent}`;
+        laps.appendChild(li);
+      }
+    });
+
+    resetBtn.addEventListener("click", () => {
+      clearInterval(interval);
+      running = false;
+      timerDisplay.textContent = "00:00:00.00";
+      timerDisplay.removeAttribute("data-time");
+      startStopBtn.textContent = "Start";
+      lapBtn.disabled = true;
+      laps.innerHTML = "";
+      lapCounter = 1;
+    });
+  </script>
+</body>
+</html>
