@@ -14,8 +14,6 @@ This project helps users measure time intervals with precision. You can start, p
 
 * 🌗 Animated Gradient background
 
-* 💾 Session persistence – laps remembered via localStorage
-
 * 🖥️ Responsive UI with smooth animations
 
 
